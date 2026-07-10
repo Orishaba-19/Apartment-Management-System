@@ -133,36 +133,36 @@ Example: `http://192.168.1.100:8000`
 ### For Production Deployment:
 
 1. **Change DEBUG to False**
-   ```python
-   # config/settings.py
-   DEBUG = False
-   ```
+```python
+# config/settings.py
+DEBUG = False
+```
 
 2. **Set a Strong SECRET_KEY**
-   ```python
-   # Generate a new secret key
-   python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-   ```
-   - Replace the SECRET_KEY in settings.py with the generated one
+```python
+# Generate a new secret key
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+ - Replace the SECRET_KEY in settings.py with the generated one
 
 3. **Set Specific ALLOWED_HOSTS**
-   ```python
-   # Instead of ['*'], use specific domains
-   ALLOWED_HOSTS = ['your-domain.com', 'www.your-domain.com']
-   ```
+```python
+# Instead of ['*'], use specific domains
+ALLOWED_HOSTS = ['your-domain.com', 'www.your-domain.com']
+```
 
 4. **Use Environment Variables**
-   - Store sensitive data in environment variables
-   - Use `python-decouple` or `os.environ` to access them
+ - Store sensitive data in environment variables
+ - Use `python-decouple` or `os.environ` to access them
 
 5. **Enable HTTPS**
-   - Most cloud providers offer free SSL certificates
-   - Always use HTTPS in production
+ - Most cloud providers offer free SSL certificates
+ - Always use HTTPS in production
 
 6. **Database Backup**
-   - Regularly backup your database
-   - For SQLite, copy the `db.sqlite3` file
-   - For cloud deployments, use their backup features
+ - Regularly backup your database
+ - For SQLite, copy the `db.sqlite3` file
+ - For cloud deployments, use their backup features
 
 ---
 

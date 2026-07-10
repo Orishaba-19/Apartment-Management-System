@@ -56,6 +56,9 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
+
+# Backup archive generated during cleanup
+archive_backup.zip
 db.sqlite3
 db.sqlite3-journal
 /media

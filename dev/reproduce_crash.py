@@ -1,8 +1,8 @@
-from tenants.forms import TenantForm
-from payments.forms import PaymentForm
-from payments.models import Payment
-from tenants.models import Tenant
 from houses.models import House
+from tenants.models import Tenant
+from payments.models import Payment
+from payments.forms import PaymentForm
+from tenants.forms import TenantForm
 import os
 import sys
 import traceback
@@ -18,7 +18,7 @@ sys.path.insert(0, BASE_DIR)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
-# Import models after Django is configured
+# Import models and forms after Django is configured
 
 client = Client()
 

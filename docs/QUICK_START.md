@@ -58,7 +58,6 @@
 2. On mobile/other device browser, go to: `http://<computer-ip>:8000`
 3. Example: `http://192.168.1.100:8000`
 4. Interface automatically adjusts for mobile screen
-5. Sidebar becomes collapsible menu
 
 ---
 
@@ -124,40 +123,6 @@ python manage.py runserver
 - Hard delete requires confirmation (use cautiously)
 - Transaction history is immutable (cannot be changed after creation)
 - Regular database backups recommended
-
----
-
-## 📱 Mobile Features
-
-The system is fully responsive on:
-- ✅ iPhones & iPads
-- ✅ Android phones & tablets
-- ✅ Any modern browser
-
-All features work the same on mobile:
-- Hover popups become tap-to-view
-- Tables adapt to screen size
-- Navigation menu collapses on small screens
-- Forms are touch-optimized
-
----
-
-## 🆘 Troubleshooting
-
-### "Cannot connect from mobile"
-- Check if computer is on same WiFi
-- Verify you're using correct IP address (from `ipconfig`)
-- Check firewall isn't blocking port 8000
-- Try: `python manage.py runserver 0.0.0.0:8000`
-
-### "Transaction not showing in history"
-- Refresh the page
-- Transaction logging is automatic on payments
-- Check transaction history tab in tenant profile
-
-### "Soft delete didn't work"
-- Tenant marked as inactive but data preserved
-- To permanently delete, use hard delete option
 
 ---
 

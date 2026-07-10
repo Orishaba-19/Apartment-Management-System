@@ -179,7 +179,7 @@ TransactionHistory
 4. Confirm the action
 
 ### Access from Mobile
-1. Get the IP address of the computer running Django
+1. Find the IP address of the computer running Django
 2. On mobile, open browser and go to: `http://<IP>:8000`
 3. (Replace <IP> with actual IP address)
 4. System will automatically adapt to mobile screen
