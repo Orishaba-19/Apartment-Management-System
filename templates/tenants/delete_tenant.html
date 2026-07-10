@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+    <h2 class="mb-4">Delete Tenant</h2>
+
+    <div class="row">
+        <!-- Soft Delete Option -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-warning p-4">
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-archive text-warning"></i> Soft Delete (Recommended)
+                </h5>
+                
+                <div class="alert alert-info mb-3">
+                    <small>
+                        Keep tenant record and payment history for future reference. The tenant will no longer appear 
+                        in the active list but all data is preserved.
+                    </small>
+                </div>
+
+                <div class="card-text mb-3">
+                    <p class="mb-2"><strong>This will:</strong></p>
+                    <ul class="mb-3">
+                        <li>Mark tenant as inactive</li>
+                        <li>Free up the house ({{ tenant.house.house_number|default:"N/A" }})</li>
+                        <li>Preserve all payment history</li>
+                        <li>Keep all transaction records</li>
+                    </ul>
+                </div>
+
+                <div class="card-text mb-3">
+                    <p><strong>Tenant Details:</strong></p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>Name: {{ tenant.full_name }}</li>
+                        <li>Phone: {{ tenant.phone_number }}</li>
+                        <li>Balance: UGX {{ tenant.balance }}</li>
+                        <li>Security Deposit: UGX {{ tenant.security_deposit }}</li>
+                    </ul>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <a href="/tenants/{{ tenant.id }}/" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-warning btn-sm">
+                        <i class="bi bi-archive"></i> Soft Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Hard Delete Option -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-danger p-4">
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-exclamation-triangle-fill text-danger"></i> Hard Delete
+                </h5>
+                
+                <div class="alert alert-danger mb-3">
+                    <small>
+                        <strong>WARNING:</strong> This will permanently delete the tenant and all associated data. 
+                        This action CANNOT be undone!
+                    </small>
+                </div>
+
+                <div class="card-text mb-3">
+                    <p class="mb-2"><strong>This will delete:</strong></p>
+                    <ul class="mb-3">
+                        <li>Tenant record</li>
+                        <li>All payment history</li>
+                        <li>All transaction records</li>
+                        <li>All financial information</li>
+                    </ul>
+                </div>
+
+                <div class="card-text mb-3">
+                    <p class="mb-2"><strong>Tenant to Delete:</strong></p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>Name: {{ tenant.full_name }}</li>
+                        <li>Phone: {{ tenant.phone_number }}</li>
+                        <li>Balance: UGX {{ tenant.balance }}</li>
+                        <li>Security Deposit: UGX {{ tenant.security_deposit }}</li>
+                    </ul>
+                </div>
+
+                <form method="POST" action="/tenants/{{ tenant.id }}/hard-delete/">
+                    {% csrf_token %}
+                    <input type="hidden" name="confirm_delete" value="yes">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you ABSOLUTELY sure? This cannot be undone!')">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Permanently Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

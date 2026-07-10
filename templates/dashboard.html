@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<!-- Key Performance Indicators -->
+<div class="row mb-4">
+
+    <div class="col-md-3 mb-3">
+        <div class="card dashboard-card p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="text-muted mb-2">Total Tenants</h6>
+                    <h2 class="text-primary">{{ total_tenants }}</h2>
+                </div>
+                <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card dashboard-card p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="text-muted mb-2">Occupied Houses</h6>
+                    <h2 class="text-success">{{ occupied_houses }}</h2>
+                </div>
+                <i class="bi bi-house-fill text-success" style="font-size: 2rem;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card dashboard-card p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="text-muted mb-2">Vacant Houses</h6>
+                    <h2 class="text-warning">{{ vacant_houses }}</h2>
+                </div>
+                <i class="bi bi-house text-warning" style="font-size: 2rem;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a href="/overdue/" class="text-decoration-none">
+            <div class="card dashboard-card p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Overdue Tenants</h6>
+                        <h2 class="text-danger">{{ overdue_tenants }}</h2>
+                    </div>
+                    <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 2rem;"></i>
+                </div>
+            </div>
+        </a>
+    </div>
+
+</div>
+
+<!-- Financial Summary -->
+<div class="row mb-4">
+
+    <div class="col-md-6 mb-3">
+        <div class="card dashboard-card p-4">
+            <h5 class="card-title mb-3">Rent Collection</h5>
+            <div class="mb-3">
+                <p class="text-muted mb-1">This Month Collected</p>
+                <h3 class="text-success">UGX {{ monthly_income|floatformat:2 }}</h3>
+            </div>
+            <hr>
+            <div>
+                <p class="text-muted mb-1">Total Outstanding Rent</p>
+                <h3 class="text-danger">UGX {{ total_rent_owed|floatformat:2 }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card dashboard-card p-4">
+            <h5 class="card-title mb-3">Quick Actions</h5>
+            <a href="/tenants/add/" class="btn btn-outline-primary btn-sm mb-2 d-block">
+                <i class="bi bi-plus-circle"></i> Add Tenant
+            </a>
+            <a href="/payments/add/" class="btn btn-outline-success btn-sm mb-2 d-block">
+                <i class="bi bi-cash-stack"></i> Record Payment
+            </a>
+            <a href="/tenants/" class="btn btn-outline-dark btn-sm mb-2 d-block">
+                <i class="bi bi-list"></i> View All Tenants
+            </a>
+            <a href="/overdue/" class="btn btn-outline-danger btn-sm d-block">
+                <i class="bi bi-exclamation-triangle"></i> View Overdue Tenants
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- House-Based Breakdown -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card dashboard-card p-4">
+            <h5 class="card-title mb-3">House Status & Rent Collection</h5>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>House</th>
+                            <th>Status</th>
+                            <th>Tenant Name</th>
+                            <th>Monthly Rent</th>
+                            <th>Outstanding Balance</th>
+                            <th>Payment Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in house_stats %}
+                        <tr>
+                            <td><strong>{{ stat.house.house_number }}</strong></td>
+                            <td>
+                                {% if stat.status == 'Occupied' %}
+                                    <span class="badge bg-success">Occupied</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Vacant</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if stat.tenant %}
+                                    <a href="/tenants/{{ stat.tenant.id }}/" class="text-decoration-none">
+                                        {{ stat.tenant.full_name }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>UGX {{ stat.expected_rent|floatformat:2 }}</td>
+                            <td>
+                                {% if stat.balance > 0 %}
+                                    <span class="text-danger"><strong>UGX {{ stat.balance|floatformat:2 }}</strong></span>
+                                {% elif stat.balance < 0 %}
+                                    <span class="text-success">UGX {{ stat.balance|floatformat:2 }}</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if stat.tenant %}
+                                    {% if stat.tenant.next_due_date < today %}
+                                        <span class="badge bg-danger">Overdue</span>
+                                    {% elif stat.balance > 0 %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Paid</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

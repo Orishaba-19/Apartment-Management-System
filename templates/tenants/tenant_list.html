@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Tenants</h2>
+    <a href="/tenants/add/" class="btn btn-dark">
+        <i class="bi bi-plus-circle"></i> Add Tenant
+    </a>
+</div>
+
+<div class="card p-4">
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>House</th>
+                    <th>Phone</th>
+                    <th>Move-In Date</th>
+                    <th>Next Due</th>
+                    <th>Rent Balance</th>
+                    <th>Security Deposit</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for tenant in tenants %}
+
+                <tr>
+                    <td>
+                        <a href="#" 
+                           class="text-decoration-none tenant-profile-link" 
+                           data-tenant-id="{{ tenant.id }}"
+                           data-bs-toggle="popover" 
+                           data-bs-placement="right"
+                           data-bs-trigger="hover"
+                           data-bs-html="true"
+                           title="Tenant Profile - {{ tenant.full_name }}"
+                           data-bs-content="<div class='spinner-border spinner-border-sm' role='status'><span class='visually-hidden'>Loading...</span></div>">
+                            <strong>{{ tenant.full_name }}</strong>
+                        </a>
+                    </td>
+                    <td>{{ tenant.house.house_number|default:"N/A" }}</td>
+                    <td>{{ tenant.phone_number }}</td>
+                    <td>{{ tenant.move_in_date|date:"d M Y" }}</td>
+                    <td>
+                        {% if tenant.next_due_date < today %}
+                            <span class="badge bg-danger">{{ tenant.next_due_date|date:"d M Y" }} (Overdue)</span>
+                        {% else %}
+                            {{ tenant.next_due_date|date:"d M Y" }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if tenant.balance > 0 %}
+                            <span class="text-danger"><strong>UGX {{ tenant.balance }}</strong></span>
+                        {% else %}
+                            <span class="text-success">UGX {{ tenant.balance }}</span>
+                        {% endif %}
+                    </td>
+                    <td>UGX {{ tenant.security_deposit }}</td>
+                    <td>
+                        <a href="/tenants/{{ tenant.id }}/" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a href="/tenants/{{ tenant.id }}/delete/" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all popovers
+        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl, {
+                trigger: 'hover'
+            });
+        });
+
+        // Load profile content on hover
+        document.querySelectorAll('.tenant-profile-link').forEach(link => {
+            link.addEventListener('show.bs.popover', function() {
+                const tenantId = this.getAttribute('data-tenant-id');
+                const popover = bootstrap.Popover.getInstance(this);
+                
+                // Fetch profile details
+                fetch(`/tenants/${tenantId}/profile-details/`)
+                    .then(response => response.text())
+                    .then(html => {
+                        popover.setContent({
+                            '.popover-body': html
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading tenant profile:', error);
+                        popover.setContent({
+                            '.popover-body': '<p class="text-danger">Error loading profile</p>'
+                        });
+                    });
+            });
+        });
+    });
+</script>
+
+<style>
+    .popover {
+        max-width: 400px;
+    }
+    
+    .popover-body {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+</style>
+
+{% endblock %}

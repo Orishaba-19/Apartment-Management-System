@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Overdue Tenants</h2>
+    <a href="/" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<div class="card p-4">
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>House</th>
+                    <th>Phone</th>
+                    <th>Next Due Date</th>
+                    <th>Days Overdue</th>
+                    <th>Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for item in overdue_tenants %}
+
+                <tr>
+                    <td>
+                        <a href="/tenants/{{ item.tenant.id }}/" class="text-decoration-none">
+                            <strong>{{ item.tenant.full_name }}</strong>
+                        </a>
+                    </td>
+                    <td>{{ item.tenant.house.house_number|default:"N/A" }}</td>
+                    <td>{{ item.tenant.phone_number }}</td>
+                    <td>
+                        <span class="badge bg-danger">{{ item.tenant.next_due_date|date:"d M Y" }}</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-warning">
+                            {{ item.days_overdue }} days
+                        </span>
+                    </td>
+                    <td>
+                        <span class="text-danger"><strong>UGX {{ item.tenant.balance }}</strong></span>
+                    </td>
+                    <td>
+                        <a href="/tenants/{{ item.tenant.id }}/" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                        <a href="/payments/add/" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-cash"></i> Record Payment
+                        </a>
+                    </td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="7" class="text-center text-muted">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                        <p class="mt-2">No overdue tenants found!</p>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

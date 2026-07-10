@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Payments</h2>
+    <a href="/payments/add/" class="btn btn-success">
+        <i class="bi bi-cash-stack"></i> Record Payment
+    </a>
+</div>
+
+<div class="card p-4">
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+
+            <thead class="table-light">
+                <tr>
+                    <th>Tenant Name</th>
+                    <th>Amount Paid</th>
+                    <th>Months Paid</th>
+                    <th>Payment Date</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for payment in payments %}
+
+                <tr>
+                    <td>
+                        <strong>{{ payment.tenant.full_name }}</strong>
+                        <br>
+                        <small class="text-muted">{{ payment.tenant.house.house_number }}</small>
+                    </td>
+                    <td>
+                        <strong class="text-success">UGX {{ payment.amount_paid }}</strong>
+                    </td>
+                    <td>
+                        <span class="badge bg-info">{{ payment.months_paid }} month{{ payment.months_paid|pluralize }}</span>
+                    </td>
+                    <td>{{ payment.payment_date|date:"d M Y" }}</td>
+                    <td>
+                        {% if payment.notes %}
+                            {{ payment.notes|truncatewords:8 }}
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/payments/{{ payment.id }}/delete/" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No payments recorded yet.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

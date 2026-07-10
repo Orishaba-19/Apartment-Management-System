@@ -1,0 +1,87 @@
+<div class="tenant-profile-popup">
+    <!-- Personal Info Section -->
+    <div class="mb-3">
+        <h6 class="text-muted small">PERSONAL INFORMATION</h6>
+        <p class="mb-1"><strong>{{ tenant.full_name }}</strong></p>
+        <p class="mb-1 small">📱 {{ tenant.phone_number }}</p>
+        {% if tenant.national_id %}
+            <p class="mb-1 small">🆔 {{ tenant.national_id }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Housing Info Section -->
+    <hr class="my-2">
+    <div class="mb-3">
+        <h6 class="text-muted small">HOUSING INFORMATION</h6>
+        <p class="mb-1 small">House: <strong>{{ tenant.house.house_number|default:"N/A" }}</strong></p>
+        <p class="mb-1 small">Move-in: <strong>{{ tenant.move_in_date|date:"d M Y" }}</strong></p>
+        <p class="mb-1 small">Monthly Rent: <strong>UGX {{ tenant.house.monthly_rent|default:"N/A" }}</strong></p>
+    </div>
+
+    <!-- Financial Info Section -->
+    <hr class="my-2">
+    <div class="mb-3">
+        <h6 class="text-muted small">FINANCIAL STATUS</h6>
+        <p class="mb-1 small">
+            Balance: 
+            {% if tenant.balance > 0 %}
+                <span class="badge bg-danger">UGX {{ tenant.balance }}</span>
+            {% else %}
+                <span class="badge bg-success">UGX {{ tenant.balance }}</span>
+            {% endif %}
+        </p>
+        <p class="mb-1 small">Security Deposit: <strong>UGX {{ tenant.security_deposit }}</strong></p>
+        <p class="mb-1 small">
+            Due Date: 
+            {% if tenant.next_due_date < today %}
+                <span class="badge bg-danger">{{ tenant.next_due_date|date:"d M Y" }}</span>
+            {% else %}
+                <strong>{{ tenant.next_due_date|date:"d M Y" }}</strong>
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Recent Transactions Section -->
+    {% if payments %}
+        <hr class="my-2">
+        <div class="mb-3">
+            <h6 class="text-muted small">RECENT PAYMENTS (Last 5)</h6>
+            <div style="max-height: 150px; overflow-y: auto;">
+                <table class="table table-sm table-borderless mb-0">
+                    <tbody>
+                        {% for payment in payments %}
+                            <tr>
+                                <td class="ps-0 small">{{ payment.payment_date|date:"d M Y" }}</td>
+                                <td class="text-end small"><strong>UGX {{ payment.amount_paid }}</strong></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Quick Actions -->
+    <hr class="my-2">
+    <div class="d-flex gap-2">
+        <a href="/tenants/{{ tenant.id }}/" class="btn btn-sm btn-primary flex-grow-1">View Full Profile</a>
+        <a href="/payments/add/" class="btn btn-sm btn-success">Record Payment</a>
+    </div>
+</div>
+
+<style>
+    .tenant-profile-popup {
+        font-size: 0.875rem;
+        padding: 0;
+    }
+    
+    .tenant-profile-popup p {
+        margin-bottom: 0.5rem;
+    }
+    
+    .tenant-profile-popup h6 {
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+</style>

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+    <h2 class="mb-4">Delete Payment</h2>
+
+    <div class="alert alert-warning">
+        <h5><i class="bi bi-exclamation-triangle-fill"></i> Warning</h5>
+        <p>You are about to delete a payment record.</p>
+        <p>This will:</p>
+        <ul>
+            <li>Delete the payment record permanently</li>
+            <li>Reverse the balance calculation for the tenant</li>
+            <li>The tenant's balance will be adjusted accordingly</li>
+        </ul>
+        <p class="mb-0"><strong>This action cannot be undone.</strong></p>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <h5 class="card-title mb-3">Payment Information</h5>
+        <p><strong>Tenant:</strong> {{ payment.tenant.full_name }}</p>
+        <p><strong>Amount Paid:</strong> UGX {{ payment.amount_paid }}</p>
+        <p><strong>Months Paid:</strong> {{ payment.months_paid }}</p>
+        <p><strong>Payment Date:</strong> {{ payment.payment_date|date:"d M Y" }}</p>
+        <p><strong>Notes:</strong> {{ payment.notes|default:"-" }}</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <a href="/payments/" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Cancel
+        </a>
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Confirm Delete
+        </button>
+    </form>
+
+</div>
+
+{% endblock %}

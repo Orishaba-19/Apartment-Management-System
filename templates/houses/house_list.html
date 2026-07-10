@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Houses</h2>
+        <p class="text-muted">Manage the house records and rent allocation.</p>
+    </div>
+    <a href="{% url 'add_house' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Add House
+    </a>
+</div>
+
+<div class="card p-4">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>House Number</th>
+                    <th>Monthly Rent</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for house in houses %}
+                <tr>
+                    <td>{{ house.house_number }}</td>
+                    <td>UGX {{ house.monthly_rent }}</td>
+                    <td>
+                        {% if house.is_occupied %}
+                        <span class="badge bg-success">Occupied</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Vacant</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_house' house.id %}" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_house' house.id %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted">
+                        No houses found. Add a house to start assigning tenants.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

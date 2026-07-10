@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Tenant Profile: {{ tenant.full_name }}</h2>
+    <div>
+        <a href="/tenants/" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+        <a href="/tenants/{{ tenant.id }}/delete/" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Delete Tenant
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+
+    <div class="col-md-6 mb-3">
+        <div class="card dashboard-card p-4">
+            <h5 class="card-title mb-3">Personal Information</h5>
+            <p><strong>Full Name:</strong> {{ tenant.full_name }}</p>
+            <p><strong>Phone Number:</strong> {{ tenant.phone_number }}</p>
+            <p><strong>National ID:</strong> {{ tenant.national_id|default:"N/A" }}</p>
+            <p><strong>House:</strong> {{ tenant.house.house_number|default:"N/A" }}</p>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card dashboard-card p-4">
+            <h5 class="card-title mb-3">Financial Information</h5>
+            <p><strong>Security Deposit:</strong> UGX {{ tenant.security_deposit }}</p>
+            <p><strong>Current Balance:</strong>
+                {% if tenant.balance > 0 %}
+                    <span class="text-danger"><strong>UGX {{ tenant.balance }}</strong></span>
+                {% else %}
+                    <span class="text-success">UGX {{ tenant.balance }}</span>
+                {% endif %}
+            </p>
+            <p><strong>Monthly Rent:</strong> UGX {{ tenant.house.monthly_rent|default:"N/A" }}</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="row mb-4">
+
+    <div class="col-md-6 mb-3">
+        <div class="card dashboard-card p-4">
+            <h5 class="card-title mb-3">Dates</h5>
+            <p><strong>Move-In Date:</strong> {{ tenant.move_in_date|date:"d M Y" }}</p>
+            <p><strong>Next Due Date:</strong>
+                {% if tenant.next_due_date < today %}
+                    <span class="badge bg-danger">{{ tenant.next_due_date|date:"d M Y" }} (Overdue)</span>
+                {% else %}
+                    {{ tenant.next_due_date|date:"d M Y" }}
+                {% endif %}
+            </p>
+            {% if tenant.deleted_at %}
+                <p><strong>Deleted At:</strong> {{ tenant.deleted_at|date:"d M Y H:i" }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card dashboard-card p-4">
+            <h5 class="card-title mb-3">Status</h5>
+            <p><strong>Active:</strong>
+                {% if tenant.is_active %}
+                    <span class="badge bg-success">Yes</span>
+                {% else %}
+                    <span class="badge bg-secondary">No</span>
+                {% endif %}
+            </p>
+            <p><strong>House Occupied:</strong>
+                {% if tenant.house and tenant.house.is_occupied %}
+                    <span class="badge bg-success">Yes</span>
+                {% else %}
+                    <span class="badge bg-warning">No</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Navigation Tabs for Payment and Transaction History -->
+<div class="card p-4 mb-4">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab" aria-controls="payments" aria-selected="true">
+                <i class="bi bi-cash-stack"></i> Payment History
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions" type="button" role="tab" aria-controls="transactions" aria-selected="false">
+                <i class="bi bi-list-check"></i> Transaction History
+            </button>
+        </li>
+    </ul>
+
+    <!-- Payment History Tab -->
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+            <h6 class="mb-3">All Payment Records</h6>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount Paid</th>
+                            <th>Months Paid</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.payment_date|date:"d M Y" }}</td>
+                            <td><strong>UGX {{ payment.amount_paid }}</strong></td>
+                            <td>{{ payment.months_paid }}</td>
+                            <td>{{ payment.notes|default:"-" }}</td>
+                            <td>
+                                <a href="/payments/{{ payment.id }}/delete/" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No payment history found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Transaction History Tab -->
+        <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
+            <h6 class="mb-3">Complete Transaction Audit Trail</h6>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Previous Balance</th>
+                            <th>New Balance</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transaction_history %}
+                        <tr>
+                            <td>{{ transaction.created_at|date:"d M Y H:i" }}</td>
+                            <td>
+                                {% if transaction.transaction_type == 'payment' %}
+                                    <span class="badge bg-success"><i class="bi bi-cash-stack"></i> Payment</span>
+                                {% elif transaction.transaction_type == 'deposit_update' %}
+                                    <span class="badge bg-info"><i class="bi bi-safe"></i> Deposit Update</span>
+                                {% elif transaction.transaction_type == 'tenant_created' %}
+                                    <span class="badge bg-primary"><i class="bi bi-person-plus"></i> Tenant Created</span>
+                                {% elif transaction.transaction_type == 'tenant_deleted' %}
+                                    <span class="badge bg-warning"><i class="bi bi-person-x"></i> Tenant Deleted</span>
+                                {% elif transaction.transaction_type == 'balance_adjustment' %}
+                                    <span class="badge bg-warning"><i class="bi bi-exclamation-triangle"></i> Balance Adjustment</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if transaction.amount %}
+                                    {% if transaction.amount > 0 %}
+                                        <span class="text-success">+UGX {{ transaction.amount }}</span>
+                                    {% else %}
+                                        <span class="text-danger">UGX {{ transaction.amount }}</span>
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if transaction.previous_balance is not None %}
+                                    UGX {{ transaction.previous_balance }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if transaction.new_balance is not None %}
+                                    <strong>UGX {{ transaction.new_balance }}</strong>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <small>{{ transaction.description }}</small>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No transaction history found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Add Tenant</h2>
+
+<div class="card p-4">
+
+    <form method="POST" autocomplete="off">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-dark">
+            Save Tenant
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
