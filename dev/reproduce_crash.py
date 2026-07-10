@@ -1,8 +1,8 @@
-from houses.models import House
-from tenants.models import Tenant
-from payments.models import Payment
-from payments.forms import PaymentForm
 from tenants.forms import TenantForm
+from payments.forms import PaymentForm
+from payments.models import Payment
+from tenants.models import Tenant
+from houses.models import House
 import os
 import sys
 import traceback
