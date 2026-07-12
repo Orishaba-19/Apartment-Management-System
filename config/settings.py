@@ -29,7 +29,22 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
+
+def get_allowed_hosts():
+    configured_hosts = [
+        host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',') if host.strip()
+    ]
+    render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '').strip()
+    if render_host:
+        configured_hosts.append(render_host)
+
+    if not configured_hosts or '*' in configured_hosts:
+        return ['*']
+
+    return configured_hosts
+
+
+ALLOWED_HOSTS = get_allowed_hosts()
 
 
 # Application definition
