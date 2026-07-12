@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from dateutil.relativedelta import relativedelta
@@ -6,6 +7,7 @@ from .forms import PaymentForm
 from .models import Payment, TransactionHistory
 
 
+@login_required(login_url='login')
 def payment_list(request):
 
     payments = Payment.objects.all().order_by('-payment_date')
@@ -17,6 +19,7 @@ def payment_list(request):
     return render(request, 'payments/payment_list.html', context)
 
 
+@login_required(login_url='login')
 def delete_payment(request, payment_id):
 
     payment = get_object_or_404(Payment, id=payment_id)
@@ -67,6 +70,7 @@ def delete_payment(request, payment_id):
     return render(request, 'payments/delete_payment.html', context)
 
 
+@login_required(login_url='login')
 def add_payment(request):
 
     form = PaymentForm()

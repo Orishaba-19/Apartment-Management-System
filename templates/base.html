@@ -180,6 +180,20 @@
                 Houses
             </a>
 
+            {% if user.is_authenticated %}
+            <div class="mt-4 px-3">
+                <small class="text-secondary">Signed in as</small>
+                <div class="fw-bold">{{ user.username }}</div>
+                <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm mt-2 w-100">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+            {% else %}
+            <div class="mt-4 px-3">
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm w-100">Login</a>
+            </div>
+            {% endif %}
+
         </div>
 
         <!-- Mobile Menu Toggle -->

@@ -49,6 +49,9 @@ def get_allowed_hosts():
 
 ALLOWED_HOSTS = get_allowed_hosts()
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'login'
 
 # Application definition
 

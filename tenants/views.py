@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
 from django.http import JsonResponse
@@ -8,6 +9,7 @@ from payments.models import Payment, TransactionHistory
 from django.utils import timezone
 
 
+@login_required(login_url='login')
 def tenant_list(request):
 
     tenants = Tenant.objects.filter(is_deleted=False)
@@ -20,6 +22,7 @@ def tenant_list(request):
     return render(request, 'tenants/tenant_list.html', context)
 
 
+@login_required(login_url='login')
 def tenant_detail(request, tenant_id):
 
     tenant = get_object_or_404(Tenant, id=tenant_id)
@@ -36,6 +39,7 @@ def tenant_detail(request, tenant_id):
     return render(request, 'tenants/tenant_detail.html', context)
 
 
+@login_required(login_url='login')
 @require_http_methods(["GET"])
 def tenant_profile_details(request, tenant_id):
     """API endpoint for tenant profile popup - returns tenant details and recent transactions"""
@@ -53,6 +57,7 @@ def tenant_profile_details(request, tenant_id):
     })
 
 
+@login_required(login_url='login')
 def add_tenant(request):
 
     form = TenantForm()
@@ -89,6 +94,7 @@ def add_tenant(request):
     return render(request, 'tenants/add_tenant.html', context)
 
 
+@login_required(login_url='login')
 def delete_tenant(request, tenant_id):
 
     tenant = get_object_or_404(Tenant, id=tenant_id)
@@ -127,6 +133,7 @@ def delete_tenant(request, tenant_id):
     return render(request, 'tenants/delete_tenant.html', context)
 
 
+@login_required(login_url='login')
 def hard_delete_tenant(request, tenant_id):
     """Permanently delete tenant and all their data - use with caution"""
     tenant = get_object_or_404(Tenant, id=tenant_id)

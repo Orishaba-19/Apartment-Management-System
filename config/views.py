@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.utils import timezone
-from datetime import timedelta
 from decimal import Decimal
 
 from tenants.models import Tenant
@@ -8,6 +10,7 @@ from houses.models import House
 from payments.models import Payment
 
 
+@login_required(login_url='login')
 def dashboard(request):
 
     total_tenants = Tenant.objects.filter(is_deleted=False).count()
@@ -74,6 +77,7 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 
+@login_required(login_url='login')
 def overdue_tenants(request):
 
     today = timezone.now().date()
@@ -99,3 +103,24 @@ def overdue_tenants(request):
     }
 
     return render(request, 'overdue_tenants.html', context)
+
+
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'registration/register.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
