@@ -24,3 +24,8 @@ class AuthenticationFlowTests(TestCase):
         self.assertTrue(user.pk)
         self.assertTrue(self.client.login(
             username='newuser', password='StrongPass123!'))
+
+    def test_login_page_displays_google_sign_in_option(self):
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Google')
