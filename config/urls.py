@@ -26,6 +26,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
+    path('accounts/', include('allauth.urls')),
     path('tenants/', include('tenants.urls')),
     path('payments/', include('payments.urls')),
     path('houses/', include('houses.urls')),
