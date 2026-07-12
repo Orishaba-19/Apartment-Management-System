@@ -32,13 +32,18 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 def get_allowed_hosts():
     configured_hosts = [
-        host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',') if host.strip()
+        host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if host.strip()
     ]
     render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '').strip()
     if render_host:
         configured_hosts.append(render_host)
 
-    if not configured_hosts or '*' in configured_hosts:
+    if not configured_hosts:
+        if os.environ.get('DJANGO_DEBUG', 'True') == 'True':
+            return ['localhost', '127.0.0.1', '[::1]']
+        return ['*']
+
+    if '*' in configured_hosts:
         return ['*']
 
     return configured_hosts
