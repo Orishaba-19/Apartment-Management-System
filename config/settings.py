@@ -137,6 +137,10 @@ STATICFILES_DIRS = [
 # Use WhiteNoise to serve compressed static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Ensure the log directory exists before Django configures file logging.
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
 # Logging configuration - writes exceptions and errors to logs/error.log
 LOGGING = {
     'version': 1,
